@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.security.Principal;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class NotificationMessage {
 
     private String token;
+
+    private Principal principal;
 
     private JsonNode message;
 

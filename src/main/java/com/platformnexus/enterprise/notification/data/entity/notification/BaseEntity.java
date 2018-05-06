@@ -25,38 +25,38 @@ public class BaseEntity implements Serializable {
     @Id
     @Column(name = "id", unique = true)
     @GeneratedValue(generator = "token-uuid")
-    @GenericGenerator(name = "token-uuid", strategy = "ccom.platformnexus.enterprise.notification.util.InquisitiveUUIDGenerator")
-    private String id;
+    @GenericGenerator(name = "token-uuid", strategy = "com.platformnexus.enterprise.notification.util.InquisitiveUUIDGenerator")
+    protected String id;
 
     @JsonProperty("updated_datetime")
     @Column(name="updated_datetime")
     @JsonFormat(shape= JsonFormat.Shape.STRING)
     @DateTimeFormat(iso= DateTimeFormat.ISO.DATE)
-    private Timestamp updatedDatetime;
+    protected Timestamp updatedDatetime;
 
     @JsonProperty("updated_by")
     @Column(name="updated_by")
-    private String updatedBy;
+    protected String updatedBy;
 
     @NotNull
     @JsonProperty("created_datetime")
     @Column(name="created_datetime", updatable = false)
     @JsonFormat(shape= JsonFormat.Shape.STRING)
     @DateTimeFormat(iso= DateTimeFormat.ISO.DATE)
-    private Timestamp createdDatetime;
+    protected Timestamp createdDatetime;
 
     @NotBlank
     @JsonProperty("created_by")
     @Column(name="created_by", updatable = false)
-    private String createdBy;
+    protected String createdBy;
 
     @JsonProperty("active_record_indicator")
     @Column(name = "active_record_indicator")
-    private boolean activeRecord = true;
+    protected boolean activeRecord = true;
 
     @Version
     @JsonProperty("version")
     @Column(name = "version")
-    private Integer version;
+    protected Integer version;
 
 }

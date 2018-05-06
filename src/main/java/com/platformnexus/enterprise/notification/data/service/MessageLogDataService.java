@@ -27,7 +27,6 @@ public class MessageLogDataService {
         try {
             repository.saveAndFlush(
                     MessageLog.builder()
-                    .logDatetime(new Date())
                     .message(mapper.writeValueAsString(message))
                     .messageId(messageId)
                     .entityName(entityName)
