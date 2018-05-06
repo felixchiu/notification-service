@@ -1,0 +1,30 @@
+notification_service:
+  image: $APP_IMAGE
+  environment:
+    SPRING_PROFILES_ACTIVE:
+    SPRING_CLOUD_CONFIG_PASSWORD:
+    HEALTH_CONFIG_ENABLED: 'false'
+  labels:
+    io.rancher.scheduler.affinity:host_label: notification_service=true
+    io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
+    io.rancher.container.hostname_override: container_name
+  volumes:
+    - $APP_HOST_LOG_PATH:/opt/notification-service/logs
+    - $APP_VOLUME:/opt/notification-service/conf
+  links:
+    - redis:redis
+redis:
+  image: "redis"
+  command: redis-server --appendonly yes
+  volumes:
+    - $REDIS_STORAGE_PATH:/data
+lb:
+  ports:
+    - $APP_PORT:7000
+  labels:
+    io.rancher.loadbalancer.ssl.ports: '$APP_PORT'
+    io.rancher.scheduler.affinity:host_label: service=erplb
+    io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
+  image: rancher/load-balancer-service
+  links:
+    - notification_service:notification_service

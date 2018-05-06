@@ -1,0 +1,26 @@
+notification_service:
+  scale: 1
+  upgrade_strategy:
+    start_first: true
+  health_check:
+    port: 7000
+    interval: 6000
+    unhealthy_threshold: 3
+    request_line: GET /health HTTP/1.0
+    healthy_threshold: 2
+    response_timeout: 4000
+redis:
+  scale: 1
+  upgrade_strategy:
+    start_first: true
+lb:
+  scale: 1
+  load_balancer_config:
+    haproxy_config: {}
+  default_cert: platformnexus-wildcard
+  health_check:
+    port: 42
+    interval: 2000
+    unhealthy_threshold: 3
+    healthy_threshold: 2
+    response_timeout: 2000
