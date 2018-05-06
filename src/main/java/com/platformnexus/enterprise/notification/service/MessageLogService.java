@@ -19,16 +19,16 @@ public class MessageLogService {
     private MessageLogDataService dataService;
 
     @Async("messageLogExecutor")
-    public void addMessageLog(String messageId, String entityName, String direction, JsonNode message) {
-        dataService.addMessageLog(messageId, entityName, direction, message);
+    public void addMessageLog(String messageId, String entityName, String direction, JsonNode message, String username) {
+        dataService.addMessageLog(messageId, entityName, direction, message, username);
     }
 
-    public void addOutgoingMessageLog(String messageId, String entityName, JsonNode message) {
-        addMessageLog(messageId, entityName, AppConstants.MESSAGE_DIRECTION_OUTGOING, message);
+    public void addOutgoingMessageLog(String messageId, String entityName, JsonNode message, String username) {
+        addMessageLog(messageId, entityName, AppConstants.MESSAGE_DIRECTION_OUTGOING, message, username);
     }
 
-    public void addIncomingMessageLog(String messageId, String entityName, JsonNode message) {
-        addMessageLog(messageId, entityName, AppConstants.MESSAGE_DIRECTION_INCOMING, message);
+    public void addIncomingMessageLog(String messageId, String entityName, JsonNode message, String username) {
+        addMessageLog(messageId, entityName, AppConstants.MESSAGE_DIRECTION_INCOMING, message, username);
     }
 
 }

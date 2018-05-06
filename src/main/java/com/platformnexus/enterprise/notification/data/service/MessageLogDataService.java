@@ -23,16 +23,16 @@ public class MessageLogDataService {
 
     private final static ObjectMapper mapper = new ObjectMapper();
 
-    public void addMessageLog(String messageId, String entityName, String direction, JsonNode message) {
+    public void addMessageLog(String messageId, String entityName, String direction, JsonNode message, String username) {
         try {
-            repository.saveAndFlush(
-                    MessageLog.builder()
+            MessageLog messageLog = MessageLog.builder()
                     .message(mapper.writeValueAsString(message))
                     .messageId(messageId)
                     .entityName(entityName)
                     .direction(direction)
-                    .build()
-            );
+                    .build();
+            messageLog.setCreatedBy(username);
+            repository.saveAndFlush(messageLog);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

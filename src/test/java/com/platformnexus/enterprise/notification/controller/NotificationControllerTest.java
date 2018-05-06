@@ -7,9 +7,12 @@ import com.platformnexus.enterprise.notification.data.dto.api.NotificationRespon
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.net.URL;
 
@@ -28,8 +31,9 @@ public class NotificationControllerTest extends NotificationServiceTest {
     public void processNotification() throws Exception {
 
         URL jsonURL = this.getClass().getResource("/test_data/notification_json_01.json");
+        HttpServletRequest httpServletRequest = Mockito.mock(HttpServletRequest.class);
         JsonNode data = mapper.readValue(new File(jsonURL.getFile()), JsonNode.class);
-        ResponseEntity<NotificationResponse> response = controller.processNotification("sample_entity_name", data);
+        ResponseEntity<NotificationResponse> response = controller.processNotification("sample_entity_name", data, httpServletRequest);
         Assert.assertEquals(true, response.getBody().getNotified());
         Assert.assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
     }

@@ -29,7 +29,7 @@ public class MessageReceiver {
             log.debug("message: {}", message);
             try {
                 NotificationMessage notificationMessage = mapper.readValue(message, NotificationMessage.class);
-                messageLogService.addIncomingMessageLog(notificationMessage.getToken(), notificationMessage.getEntityName(), notificationMessage.getMessage());
+                messageLogService.addIncomingMessageLog(notificationMessage.getToken(), notificationMessage.getEntityName(), notificationMessage.getMessage(), "SERVICE");
             } catch (IOException e) {
                 e.printStackTrace();
             }
