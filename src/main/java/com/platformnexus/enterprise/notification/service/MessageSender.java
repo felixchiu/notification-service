@@ -30,7 +30,8 @@ public class MessageSender {
     private final static ObjectMapper mapper = new ObjectMapper();
 
     public void send(NotificationMessage message) throws JsonProcessingException {
-        messageLogService.addOutgoingMessageLog(message.getToken(), message.getEntityName(), message.getMessage());
+        messageLogService.addOutgoingMessageLog(message.getToken(), message.getEntityName(), message.getMessage(),
+                message.getPrincipal() !=null ? message.getPrincipal().getName() : "UNKNOWN");
         String messageBody = mapper.writeValueAsString(message);
         log.debug("Message: {}", messageBody);
         template.convertAndSend(queue, messageBody);

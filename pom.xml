@@ -24,8 +24,8 @@
         <docker-maven-plugin.version>0.25.2</docker-maven-plugin.version>
         <docker.push.registry>quay.io</docker.push.registry>
         <java.image>java:8-jdk</java.image>
-        <bamboo.buildnumber>NOBUILD</bamboo.buildnumber>
-        <image.name>felixchiu/notification-service:${bamboo.buildnumber}</image.name>
+        <buildNumber>0.1</buildNumber>
+        <image.name>platformnexus/notification-service:${buildNumber}</image.name>
         <api.basedir>/opt/notification-service</api.basedir>
     </properties>
 
