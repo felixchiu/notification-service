@@ -20,6 +20,10 @@ notification_receiver:
     request_line: GET /health HTTP/1.0
     healthy_threshold: 2
     response_timeout: 4000
+mysql:
+  scale: 1
+  upgrade_strategy:
+    start_first: true
 redis:
   scale: 1
   upgrade_strategy:
