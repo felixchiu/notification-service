@@ -19,8 +19,8 @@ public class AsyncConfig {
         return new ThreadPoolTaskExecutor();
     }
 
-    @Bean(name = "downstreamExecutor")
-    public Executor downstreamExecutor() {
+    @Bean(name = "selfQueueExecutor")
+    public Executor selfQueueExecutor() {
         return new ThreadPoolTaskExecutor();
     }
 

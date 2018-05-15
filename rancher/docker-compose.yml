@@ -1,8 +1,12 @@
 notification_service:
-  image: $APP_IMAGE
+  image: quay.io/platformnexus/notification-service:0.1
   environment:
+    SPRING_APPLICATION_NAME:
     SPRING_PROFILES_ACTIVE:
+    SPRING_CLOUD_CONFIG_URL:
+    SPRING_CLOUD_CONFIG_USERNAME:
     SPRING_CLOUD_CONFIG_PASSWORD:
+    APP_CONFIG_RECEIVER_ENABLED: 'false'
     HEALTH_CONFIG_ENABLED: 'false'
   labels:
     io.rancher.scheduler.affinity:host_label: notification_service=true
@@ -13,16 +17,37 @@ notification_service:
     - $APP_VOLUME:/opt/notification-service/conf
   links:
     - redis:redis
+notification_receiver:
+  image: quay.io/platformnexus/notification-service:0.1
+  environment:
+    SPRING_APPLICATION_NAME:
+    SPRING_PROFILES_ACTIVE:
+    SPRING_CLOUD_CONFIG_URL:
+    SPRING_CLOUD_CONFIG_USERNAME:
+    SPRING_CLOUD_CONFIG_PASSWORD:
+    APP_CONFIG_RECEIVER_ENABLED: 'true'
+    HEALTH_CONFIG_ENABLED: 'false'
+  labels:
+    io.rancher.scheduler.affinity:host_label: notification_service=true
+    io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
+    io.rancher.container.hostname_override: container_name
+  volumes:
+    - /opt/notification-receiver/logs:/opt/notification-service/logs
+    - /opt/notification-receiver/conf:/opt/notification-service/conf
+  links:
+    - redis:redis
 redis:
   image: "redis"
   command: redis-server --appendonly yes
   volumes:
-    - $REDIS_STORAGE_PATH:/data
+    - /data:/data
+  labels:
+    io.rancher.scheduler.affinity:host_label: infrastructure=true
 lb:
   ports:
-    - $APP_PORT:7000
+    - 8000:7000
   labels:
-    io.rancher.loadbalancer.ssl.ports: '$APP_PORT'
+    io.rancher.loadbalancer.ssl.ports: 8000
     io.rancher.scheduler.affinity:host_label: service=erplb
     io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
   image: rancher/load-balancer-service

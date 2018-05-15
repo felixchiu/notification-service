@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 
@@ -30,10 +31,18 @@ public class MessageSender {
     private final static ObjectMapper mapper = new ObjectMapper();
 
     public void send(NotificationMessage message) throws JsonProcessingException {
-        messageLogService.addOutgoingMessageLog(message.getToken(), message.getEntityName(), message.getMessage(),
-                message.getPrincipal() !=null ? message.getPrincipal().getName() : "UNKNOWN");
+
+        messageLogService.addOutgoingMessageLog(message.getToken(), message.getEntityName(), message.getMessage(), message.getPrincipal() !=null ? message.getPrincipal().getName() : "UNKNOWN");
         String messageBody = mapper.writeValueAsString(message);
         log.debug("Message: {}", messageBody);
+
+        // Self queue
+        sendSelfQueue(messageBody);
+        template.convertAndSend(message.getEntityName(), messageBody);
+    }
+
+    @Async("selfQueueExecutor")
+    public void sendSelfQueue(String messageBody) {
         template.convertAndSend(queue, messageBody);
     }
 
