@@ -1,30 +1,67 @@
-notification_service:
-  image: $APP_IMAGE
-  environment:
-    SPRING_PROFILES_ACTIVE:
-    SPRING_CLOUD_CONFIG_PASSWORD:
-    HEALTH_CONFIG_ENABLED: 'false'
-  labels:
-    io.rancher.scheduler.affinity:host_label: notification_service=true
-    io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
-    io.rancher.container.hostname_override: container_name
-  volumes:
-    - $APP_HOST_LOG_PATH:/opt/notification-service/logs
-    - $APP_VOLUME:/opt/notification-service/conf
-  links:
+version: '2'
+services:
+  lb:
+    image: rancher/lb-service-haproxy:v0.4.6
+    links:
+    - api:api
+    ports:
+    - 8000:8000/tcp
+    labels:
+      io.rancher.scheduler.affinity:host_label: lb=true
+      io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
+      io.rancher.container.agent.role: environmentAdmin
+      io.rancher.container.create_agent: 'true'
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: notification
+      MYSQL_PASSWORD: Pl@tf0rmNexus
+      MYSQL_ROOT_PASSWORD: Pl@tf0rmNexus
+      MYSQL_USER: platform
+      TZ: America/Los_Angeles
+  api:
+    image: quay.io/platformnexus/notification-service:0.1
+    environment:
+      HEALTH_CONFIG_ENABLED: 'false'
+      SPRING_CLOUD_CONFIG_PASSWORD:
+      SPRING_CLOUD_CONFIG_URL:
+      SPRING_CLOUD_CONFIG_USERNAME:
+      SPRING_PROFILES_ACTIVE: producer
+    volumes:
+    - /opt/notification-service/logs:/opt/notification-service/logs
+    - /opt/notification-service/conf:/opt/notification-service/conf
+    links:
     - redis:redis
-redis:
-  image: "redis"
-  command: redis-server --appendonly yes
-  volumes:
-    - $REDIS_STORAGE_PATH:/data
-lb:
-  ports:
-    - $APP_PORT:7000
-  labels:
-    io.rancher.loadbalancer.ssl.ports: '$APP_PORT'
-    io.rancher.scheduler.affinity:host_label: service=erplb
-    io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
-  image: rancher/load-balancer-service
-  links:
-    - notification_service:notification_service
+    - mysql:mysql
+    labels:
+      io.rancher.scheduler.affinity:host_label: notification_service=true
+      io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
+      io.rancher.container.hostname_override: container_name
+  receiver:
+    image: quay.io/platformnexus/notification-service:0.1
+    environment:
+      HEALTH_CONFIG_ENABLED: 'false'
+      SPRING_CLOUD_CONFIG_PASSWORD:
+      SPRING_CLOUD_CONFIG_URL:
+      SPRING_CLOUD_CONFIG_USERNAME:
+      SPRING_PROFILES_ACTIVE: receiver
+    volumes:
+    - /opt/notification-receiver/logs:/opt/notification-service/logs
+    - /opt/notification-receiver/conf:/opt/notification-service/conf
+    links:
+    - redis:redis
+    - mysql:mysql
+    labels:
+      io.rancher.scheduler.affinity:host_label: notification_service=true
+      io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
+      io.rancher.container.hostname_override: container_name
+  redis:
+    image: redis
+    volumes:
+    - /data:/data
+    command:
+    - redis-server
+    - --appendonly
+    - 'yes'
+    labels:
+      io.rancher.scheduler.affinity:host_label: infrastructure=true
