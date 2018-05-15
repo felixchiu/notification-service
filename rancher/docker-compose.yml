@@ -17,6 +17,7 @@ notification_service:
     - $APP_VOLUME:/opt/notification-service/conf
   links:
     - redis:redis
+    - mysql:mysql
 notification_receiver:
   image: quay.io/platformnexus/notification-service:0.1
   environment:
@@ -36,13 +37,22 @@ notification_receiver:
     - /opt/notification-receiver/conf:/opt/notification-service/conf
   links:
     - redis:redis
+    - mysql:mysql
 redis:
-  image: "redis"
+  image: redis
   command: redis-server --appendonly yes
   volumes:
     - /data:/data
   labels:
     io.rancher.scheduler.affinity:host_label: infrastructure=true
+mysql:
+  image: mysql:5.7
+  environment:
+    - MYSQL_DATABASE=notification
+    - MYSQL_USER=platform
+    - MYSQL_PASSWORD=Pl@tf0rmNexus
+    - MYSQL_ROOT_PASSWORD=Pl@tf0rmNexus
+    - TZ=America/Los_Angeles
 lb:
   ports:
     - 8000:7000
