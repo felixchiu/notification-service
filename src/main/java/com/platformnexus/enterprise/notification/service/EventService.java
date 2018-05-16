@@ -17,7 +17,7 @@ public class EventService {
     public Event createEvent(NotificationMessage message) {
         Event event = Event.builder()
                 .entityName(message.getEntityName())
-                .requestBody(message.getMessage().textValue())
+                .requestBody(message.getMessage().toString())
                 .token(message.getToken()).build();
         event.setCreatedBy(message.getPrincipal()!=null ? message.getPrincipal().getName() : "UNKNOWN");
         return dataService.createEvent(event);
