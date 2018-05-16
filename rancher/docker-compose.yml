@@ -3,7 +3,7 @@ services:
   lb:
     image: rancher/lb-service-haproxy:v0.4.6
     links:
-    - api:api
+    - layer:layer
     ports:
     - 8000:8000/tcp
     labels:
@@ -19,7 +19,7 @@ services:
       MYSQL_ROOT_PASSWORD: Pl@tf0rmNexus
       MYSQL_USER: platform
       TZ: America/Los_Angeles
-  api:
+  layer:
     image: quay.io/platformnexus/notification-service:0.1
     environment:
       HEALTH_CONFIG_ENABLED: 'false'
