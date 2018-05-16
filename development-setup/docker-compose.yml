@@ -3,14 +3,14 @@ database:
   container_name: mysql_database
   environment:
     - MYSQL_DATABASE=notification
-    - MYSQL_USER=felix
-    - MYSQL_PASSWORD=felix123
-    - MYSQL_ROOT_PASSWORD=felix123
+    - MYSQL_USER=platform
+    - MYSQL_PASSWORD=Pl@tf0rmNexus
+    - MYSQL_ROOT_PASSWORD=Pl@tf0rmNexus
     - TZ=America/Los_Angeles
   ports:
-    - "3306:3306"
+    - 3306:3306
 redis:
-  image: "redis"
+  image: redis
   command: redis-server --appendonly yes
   ports:
-    - "6379:6379"
+    - 6379:6379
