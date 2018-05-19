@@ -3,19 +3,25 @@ package com.platformnexus.enterprise.notification.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.platformnexus.enterprise.notification.data.dto.api.NotificationResponse;
+import com.platformnexus.enterprise.notification.data.dto.api.UserPrincipal;
 import com.platformnexus.enterprise.notification.data.dto.message.NotificationMessage;
 import com.platformnexus.enterprise.notification.data.dto.api.ServiceError;
 import com.platformnexus.enterprise.notification.service.EventService;
 import com.platformnexus.enterprise.notification.service.MessageSender;
 import com.platformnexus.enterprise.notification.util.TokenGenerator;
 import lombok.extern.slf4j.Slf4j;
+import org.dozer.DozerBeanMapper;
+import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 
 @Slf4j
@@ -44,7 +50,8 @@ public class NotificationController {
                 .token(tokenGenerator.nextString())
                 .entityName(entityName)
                 .message(message)
-                .principal(httpServletRequest!=null ? httpServletRequest.getUserPrincipal() : null)
+                .receivedDatetime(new Date())
+                .principal(generateUserPrincipal(httpServletRequest))
                 .build();
         try {
             eventService.createEvent(notificationMessage);
@@ -58,6 +65,15 @@ public class NotificationController {
             return new ResponseEntity<>(NotificationResponse.builder().token(notificationMessage.getToken()).notified(false).serviceErrors(errors).build(), HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    private UserPrincipal generateUserPrincipal(HttpServletRequest request) {
+        if (request.getUserPrincipal() == null) {
+            return null;
+        }
+        Mapper mapper = new DozerBeanMapper();
+        UserPrincipal principal = mapper.map(request.getUserPrincipal(), UserPrincipal.class);
+        return principal;
     }
 
 }

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * Created by Felix Chiu on 2/26/18.
@@ -28,6 +29,9 @@ public class Event extends BaseEntity {
 
     @Column(name="token")
     private String token;
+
+    @Column(name="received_datetime")
+    private Date receivedDatetime;
 
     @Lob
     @Column(name="request_body")

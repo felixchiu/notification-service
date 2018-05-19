@@ -1,14 +1,16 @@
 package com.platformnexus.enterprise.notification.data.dto.message;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.platformnexus.enterprise.notification.data.dto.api.UserPrincipal;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.security.Principal;
+import java.util.Date;
 
 @Data
 @Builder
@@ -20,9 +22,13 @@ public class NotificationMessage {
 
     private String token;
 
-    private Principal principal;
+    private UserPrincipal principal;
 
     private JsonNode message;
 
     private String entityName;
+
+    @JsonFormat(shape=JsonFormat.Shape.STRING)
+    @DateTimeFormat(iso= DateTimeFormat.ISO.DATE)
+    private Date receivedDatetime;
 }
