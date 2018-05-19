@@ -22,9 +22,9 @@
 
 
         <docker-maven-plugin.version>0.25.2</docker-maven-plugin.version>
-        <docker.push.registry>quay.io</docker.push.registry>
+        <!--<docker.push.registry>docker.io</docker.push.registry>-->
         <java.image>java:8-jdk</java.image>
-        <buildNumber>0.1</buildNumber>
+        <buildNumber>0.11</buildNumber>
         <image.name>platformnexus/notification-service:${buildNumber}</image.name>
         <api.basedir>/opt/notification-service</api.basedir>
     </properties>
@@ -120,7 +120,7 @@
                 <version>${docker-maven-plugin.version}</version>
                 <configuration>
                     <autoPull>always</autoPull>
-                    <pushRegistry>${docker.push.registry}</pushRegistry>
+                    <!--<pushRegistry>${docker.push.registry}</pushRegistry>-->
                     <images>
                         <image>
                             <name>${image.name}</name>
