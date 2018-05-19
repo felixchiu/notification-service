@@ -26,7 +26,7 @@ services:
       SPRING_CLOUD_CONFIG_PASSWORD:
       SPRING_CLOUD_CONFIG_URL:
       SPRING_CLOUD_CONFIG_USERNAME:
-      SPRING_PROFILES_ACTIVE: producer
+      SPRING_PROFILES_ACTIVE: layer
     volumes:
     - /opt/notification-service/logs:/opt/notification-service/logs
     - /opt/notification-service/conf:/opt/notification-service/conf
